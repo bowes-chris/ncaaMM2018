@@ -3,7 +3,7 @@ library(caret)
 datapath <- './data/'
 logpath <- './logs/'
 trainpath <- './modeldata/'
-year <- 2015
+year <- 2017
 
 teams <- read.csv(paste(datapath, 'Teams.csv', sep=''))
 seasons <- read.csv(paste(datapath, 'Seasons.csv', sep=''))
@@ -177,28 +177,28 @@ training <- createDataPartition(y = temp$class,p = 0.8,list = FALSE)
 train <- temp[training,]
 test <- temp[-training,]
 
-train[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
-    "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
-    "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
-    "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")] <-
-    scale(train[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
-    "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
-    "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
-    "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")])
+# train[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
+#     "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
+#     "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
+#     "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")] <-
+#     scale(train[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
+#     "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
+#     "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
+#     "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")])
 
-test[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
-    "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
-    "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
-    "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")] <-
-    scale(test[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
-    "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
-    "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
-    "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")])    
+# test[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
+#     "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
+#     "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
+#     "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")] <-
+#     scale(test[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
+#     "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
+#     "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
+#     "TeamBdr","TeamBast", "TeamBto","TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")])    
 #train <- cbind(tempA, tempB)
 #train <- cbind("class" = Clabel, train)
 
-write.csv(train, file = paste(trainpath, 'trainScaled', year, '.csv', sep = ''), row.names = FALSE)
-write.csv(test, file = paste(trainpath, 'testScaled', year, '.csv', sep = ''), row.names = FALSE)
+write.csv(train, file = paste(trainpath, 'train', year, '.csv', sep = ''), row.names = FALSE)
+write.csv(test, file = paste(trainpath, 'test', year, '.csv', sep = ''), row.names = FALSE)
 
 
 

@@ -20,7 +20,18 @@ rscrSeason <- rscr[rscr$Season == year,]
 tid <- teams[(teams$FirstD1Season <= year & teams$LastD1Season >= year),]
 cid <- conferences[conferences$Season == year,]
 
-mid <- strsplit(as.character(submission$ID), '_')
+mid <- matrix(unlist(strsplit(as.character(submission$ID), '_')), ncol =3)
+subseason <- vector(length = 0)
+subA <- vector(length = 0)
+subB <- vector(length = 0)
+
+for (i in 1:nrow(submission)) {
+    temp <- unlist(strsplit(as.character(submission$ID), '_'))
+    subseason <- c(subseason, temp[1])
+    subA <- c(subA, temp[2])
+    subB <- c(subB, temp[3])
+}
+
 
 Wstats <- rsdrSeason[,c("WTeamID", "WLoc", "WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
     "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")]
