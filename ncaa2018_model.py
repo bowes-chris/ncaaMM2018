@@ -26,13 +26,13 @@ early_stopping_monitor = EarlyStopping(monitor='val_acc', patience=5)
 def ncaaDNN(Train_Predictors,Train_class,NUM_PREDICTORS, NB_CLASSES, YEAR):
 
     #training hyper-parameters
-    NB_EPOCH = 1000
+    NB_EPOCH = 200
     BATCH_SIZE = 10
     N_HIDDEN = 415
     VERBOSE = 1 #display results during training
     #OPTIMIZER = SGD() # choose optimizer
     OPTIMIZER = Adam() # choose optimizer
-    VALIDATION_SPLIT = 0.2 #80% training and 20%validation
+    VALIDATION_SPLIT = 0.1 #80% training and 20%validation
     METRICS =['accuracy']
     LOSS = 'categorical_crossentropy'
     DROP_OUT = 0.3
