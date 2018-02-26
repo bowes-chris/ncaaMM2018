@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 
 np.random.seed(1671)
 
+year = '2016'
+
 def plot_roc(y_test, y_score, title):
     fpr, tpr, _ = roc_curve(y_test, y_score)
     roc_auc = auc(fpr, tpr)
@@ -29,8 +31,8 @@ def plot_roc(y_test, y_score, title):
     plt.show()
     print('AUC: %f' % roc_auc)
 
-ncaa_train = np.loadtxt('./modeldata/train2015.csv', delimiter = ',', skiprows = 1) #skip header/label row
-ncaa_test = np.loadtxt('./modeldata/test2015.csv', delimiter = ',', skiprows = 1)
+ncaa_train = np.loadtxt('./modeldata/train'+year+'.csv', delimiter = ',', skiprows = 1) #skip header/label row
+ncaa_test = np.loadtxt('./modeldata/test'+year+'.csv', delimiter = ',', skiprows = 1)
 
 ncaa_train_Predictors = ncaa_train[:,1:ncaa_train.shape[1]] # get all rows, all columns except the last column
 ncaa_train_class = ncaa_train[:,0]
@@ -44,10 +46,10 @@ NUM_PREDICTORS = ncaa_train_Predictors.shape[1]
 ncaa_train_class= np_utils.to_categorical(ncaa_train_class, CLASS_NUM)
 ncaa_test_class = np_utils.to_categorical(ncaa_test_class, CLASS_NUM)
 
-ncaaDNN, ncaaDNN_history = ncaa2018_model.ncaaDNN(ncaa_train_Predictors, ncaa_train_class, NUM_PREDICTORS, CLASS_NUM)
-ncaaDNN.save('ncaaDNN.h5')
-ncaa2018_model.SaveHistory(ncaaDNN_history, 'ncaaDNN_hist.txt')
-ncaa2018_model.plotTrainingAcc(ncaaDNN_history, 'ncaaDNN Accuracy')
-ncaa2018_model.plotTrainingLoss(ncaaDNN_history, 'ncaaDNN Loss')
+ncaaDNN, ncaaDNN_history = ncaa2018_model.ncaaDNN(ncaa_train_Predictors, ncaa_train_class, NUM_PREDICTORS, CLASS_NUM, year)
+ncaaDNN.save('ncaaDNN'+year+'.h5')
+ncaa2018_model.SaveHistory(ncaaDNN_history, 'ncaaDNN'+year+'_hist.txt')
+ncaa2018_model.plotTrainingAcc(ncaaDNN_history, 'ncaaDNN'+year+' Accuracy')
+ncaa2018_model.plotTrainingLoss(ncaaDNN_history, 'ncaaDNN'+year+' Loss')
 
 ncaa2018_model.deepPredict(ncaaDNN, ncaa_test_Predictors, ncaa_test_class, NUM_PREDICTORS, CLASS_NUM)

@@ -23,10 +23,10 @@ tb_monitor = TensorBoard(log_dir='./logs', histogram_freq=5, batch_size=10,
                          embeddings_layer_names=None, embeddings_metadata=None)
 early_stopping_monitor = EarlyStopping(monitor='val_acc', patience=5)
 
-def ncaaDNN(Train_Predictors,Train_class,NUM_PREDICTORS, NB_CLASSES):
+def ncaaDNN(Train_Predictors,Train_class,NUM_PREDICTORS, NB_CLASSES, YEAR):
 
     #training hyper-parameters
-    NB_EPOCH = 500
+    NB_EPOCH = 1000
     BATCH_SIZE = 10
     N_HIDDEN = 415
     VERBOSE = 1 #display results during training
@@ -73,7 +73,7 @@ def ncaaDNN(Train_Predictors,Train_class,NUM_PREDICTORS, NB_CLASSES):
 
     model.compile(loss=LOSS, optimizer = OPTIMIZER, metrics =METRICS)
     
-    filepath="./ckpts/model_dropout_"+str(DROP_OUT)+"_{epoch:02d}_{val_acc:.2f}.ckpt"
+    filepath="./ckpts/model_dropout_"+YEAR+str(DROP_OUT)+"_{epoch:02d}_{val_acc:.2f}.ckpt"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
     #callbacks_list = [checkpoint]    
     
