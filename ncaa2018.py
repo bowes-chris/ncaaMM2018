@@ -44,7 +44,7 @@ CLASS_NUM = 2
 NUM_PREDICTORS = ncaa_train_Predictors.shape[1]
 
 ncaa_train_class= np_utils.to_categorical(ncaa_train_class, CLASS_NUM)
-ncaa_test_class = np_utils.to_categorical(ncaa_test_class, CLASS_NUM)
+#ncaa_test_class = np_utils.to_categorical(ncaa_test_class, CLASS_NUM)
 
 ncaaDNN, ncaaDNN_history = ncaa2018_model.ncaaDNN(ncaa_train_Predictors, ncaa_train_class, NUM_PREDICTORS, CLASS_NUM, year)
 #ncaaDNN.save('ncaaDNN'+year+'.h5')
@@ -54,7 +54,3 @@ ncaa2018_model.plotTrainingAcc(ncaaDNN_history, 'ncaaDNN'+year+' Accuracy')
 
 #ncaa2018_model.deepPredict(ncaaDNN, ncaa_test_Predictors, ncaa_test_class, NUM_PREDICTORS, CLASS_NUM)
 
-#test_model = load_model('./ckpts/ncaa2014_categorical_crossentropy_50__20180226_1825_ep-278_va-0.94.ckpt')
-
-#test_results = test_model.predict(ncaa_test_Predictors)
-#test_eval = test_model.evaluate(ncaa_test_Predictors, ncaa_test_class)
