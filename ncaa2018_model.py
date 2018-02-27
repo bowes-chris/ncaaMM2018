@@ -34,42 +34,46 @@ def ncaaDNN(Train_Predictors,Train_class,NUM_PREDICTORS, NB_CLASSES, YEAR):
     OPTIMIZER = Adam() # choose optimizer
     VALIDATION_SPLIT = 0.1 #80% training and 20%validation
     METRICS =['accuracy']
-    LOSS = 'categorical_crossentropy'
+    LOSS = 'binary_crossentropy'
     DROP_OUT = 0.3
 
     model = Sequential()
     
     #add hidden layer with NUM_PREDICTORS
     model.add(Dense(units=N_HIDDEN, input_shape=(NUM_PREDICTORS,), kernel_initializer='uniform',
-                    kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
+                    kernel_regularizer='ones', activity_regularizer=l2(0.01))) 
+                    #kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
                     #W_regularizer=l1(0.01), activity_regularizer=l1(0.01))) #Lasso
     model.add(Activation('relu'))
     model.add(Dropout(DROP_OUT))
     
     #add layer
     model.add(Dense(units=N_HIDDEN, input_shape=(33,), kernel_initializer='uniform',
-                    kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
+                    kernel_regularizer='ones', activity_regularizer=l2(0.01))) 
+                    #kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
                     #W_regularizer=l1(0.01), activity_regularizer=l1(0.01))) #Lasso
     model.add(Activation('relu'))
     model.add(Dropout(DROP_OUT))
     
     #add layer
     model.add(Dense(units=N_HIDDEN, input_shape=(33,), kernel_initializer='uniform',
-                    kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
+                    kernel_regularizer='ones', activity_regularizer=l2(0.01))) 
+                    #kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
                     #W_regularizer=l1(0.01), activity_regularizer=l1(0.01))) #Lasso
     model.add(Activation('relu'))
     model.add(Dropout(DROP_OUT))
 
     #add layer
     model.add(Dense(units=N_HIDDEN, input_shape=(33,), kernel_initializer='uniform',
-                    kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
+                    kernel_regularizer='ones', activity_regularizer=l2(0.01))) 
+                    #kernel_regularizer=l2(0.01), activity_regularizer=l2(0.01))) #Ridge
                     #W_regularizer=l1(0.01), activity_regularizer=l1(0.01))) #Lasso
     model.add(Activation('relu'))
     model.add(Dropout(DROP_OUT))
 
     #add output layer with NB_CLASSES 
-    model.add(Dense(NB_CLASSES))    
-    model.add(Activation('softmax')) #set activation function for the output layer
+    model.add(Dense(NB_CLASSES, kernel_regularizer='ones'))    
+    model.add(Activation('sigmoid')) #set activation function for the output layer
 
     model.compile(loss=LOSS, optimizer = OPTIMIZER, metrics =METRICS)
     
