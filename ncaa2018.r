@@ -45,12 +45,12 @@ Lstats$LTeamID <-factor(Lstats$LTeamID)
 
 Wstats <- cbind(Wstats[c("WTeamID", "WLoc", "conf")],
     Wstats[c("WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
-    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")],#/Wstats$WPos, 
+    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")]/Wstats$WPos, 
     Wstats["WPos"])
 
 Lstats <- cbind(Lstats[c("LTeamID", "WLoc", "conf")],
     Lstats[c("LFGM", "LFGA", "LFGM3", "LFGA3", "LFTM", "LFTA",
-    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")],#/Lstats$LPos, 
+    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")]/Lstats$LPos, 
     Lstats["LPos"])
 
 statcolnames <- c("teamID", "loc", "conf", "fgm","fga","fgm3","fga3","ftm","fta",
@@ -145,10 +145,10 @@ colnames(cnames) <- clist
 colnames(teamA) <- paste('TeamA', statcolnames, sep = '')
 colnames(teamB) <- paste('TeamB', statcolnames, sep = '')
 
-diffVector <- teamA[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta",
-    "TeamAor","TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos")] 
-    - teamB[c("TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor","TeamBdr",
-    "TeamBast", "TeamBto", "TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")]
+#diffVector <- teamA[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta",
+    #"TeamAor","TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos")] 
+    #- teamB[c("TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor","TeamBdr",
+    #"TeamBast", "TeamBto", "TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")]
 
 #teamA <- teamA[-c(1:3)]
 #teamAgameStats <- teamA
@@ -177,6 +177,9 @@ temp <- cbind("class" = Clabel,  teamA[c("TeamAfgm","TeamAfga","TeamAfgm3","Team
 #train <- temp[training,]
 #test <- temp[-training,]
 
+temp[c("TeamApos", "TeamBpos")] <-
+     scale(temp[c("TeamApos", "TeamBpos")])
+
 # train[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
 #     "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
 #     "TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor",
@@ -197,7 +200,7 @@ temp <- cbind("class" = Clabel,  teamA[c("TeamAfgm","TeamAfga","TeamAfgm3","Team
 #train <- cbind(tempA, tempB)
 #train <- cbind("class" = Clabel, train)
 
-write.csv(temp, file = paste(trainpath, 'train', year, '.csv', sep = ''), row.names = FALSE)
+write.csv(temp, file = paste(trainpath, 'trainScaled', year, '.csv', sep = ''), row.names = FALSE)
 #write.csv(test, file = paste(trainpath, 'test', year, '.csv', sep = ''), row.names = FALSE)
 
 

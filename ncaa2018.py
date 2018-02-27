@@ -31,14 +31,14 @@ def plot_roc(y_test, y_score, title):
     plt.show()
     print('AUC: %f' % roc_auc)
 
-ncaa_train = np.loadtxt('./modeldata/train'+year+'.csv', delimiter = ',', skiprows = 1) #skip header/label row
-ncaa_test = np.loadtxt('./modeldata/test'+year+'.csv', delimiter = ',', skiprows = 1)
+ncaa_train = np.loadtxt('./modeldata/trainScaled'+year+'.csv', delimiter = ',', skiprows = 1) #skip header/label row
+#ncaa_test = np.loadtxt('./modeldata/testScaled'+year+'.csv', delimiter = ',', skiprows = 1)
 
 ncaa_train_Predictors = ncaa_train[:,1:ncaa_train.shape[1]] # get all rows, all columns except the last column
 ncaa_train_class = ncaa_train[:,0]
 
-ncaa_test_Predictors = ncaa_test[:,1:ncaa_test.shape[1]] # get all rows, all columns except the last column
-ncaa_test_class = ncaa_test[:,0]
+#ncaa_test_Predictors = ncaa_test[:,1:ncaa_test.shape[1]] # get all rows, all columns except the last column
+#ncaa_test_class = ncaa_test[:,0]
 
 CLASS_NUM = 2
 NUM_PREDICTORS = ncaa_train_Predictors.shape[1]
@@ -47,9 +47,14 @@ ncaa_train_class= np_utils.to_categorical(ncaa_train_class, CLASS_NUM)
 ncaa_test_class = np_utils.to_categorical(ncaa_test_class, CLASS_NUM)
 
 ncaaDNN, ncaaDNN_history = ncaa2018_model.ncaaDNN(ncaa_train_Predictors, ncaa_train_class, NUM_PREDICTORS, CLASS_NUM, year)
-ncaaDNN.save('ncaaDNN'+year+'.h5')
-ncaa2018_model.SaveHistory(ncaaDNN_history, 'ncaaDNN'+year+'_hist.txt')
+#ncaaDNN.save('ncaaDNN'+year+'.h5')
+#ncaa2018_model.SaveHistory(ncaaDNN_history, 'ncaaDNN'+year+'_hist.txt')
 ncaa2018_model.plotTrainingAcc(ncaaDNN_history, 'ncaaDNN'+year+' Accuracy')
-ncaa2018_model.plotTrainingLoss(ncaaDNN_history, 'ncaaDNN'+year+' Loss')
+#ncaa2018_model.plotTrainingLoss(ncaaDNN_history, 'ncaaDNN'+year+' Loss')
 
-ncaa2018_model.deepPredict(ncaaDNN, ncaa_test_Predictors, ncaa_test_class, NUM_PREDICTORS, CLASS_NUM)
+#ncaa2018_model.deepPredict(ncaaDNN, ncaa_test_Predictors, ncaa_test_class, NUM_PREDICTORS, CLASS_NUM)
+
+#test_model = load_model('./ckpts/ncaa2014_categorical_crossentropy_50__20180226_1825_ep-278_va-0.94.ckpt')
+
+#test_results = test_model.predict(ncaa_test_Predictors)
+#test_eval = test_model.evaluate(ncaa_test_Predictors, ncaa_test_class)

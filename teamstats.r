@@ -1,7 +1,7 @@
 datapath <- './data/'
 logpath <- './logs/'
 trainpath <- './modeldata/'
-year <- 2014
+year <- 2017
 
 teams <- read.csv(paste(datapath, 'Teams.csv', sep=''))
 seasons <- read.csv(paste(datapath, 'Seasons.csv', sep=''))
@@ -80,13 +80,17 @@ for (i in 1:nrow(tid)) {
 #total possessions
 aggStats$postot <- aggStats$fga + aggStats$to + (.475 * aggStats$fta) - aggStats$or
 #per possession stats, poss/game avg
-perPosStats <- cbind(aggStats[,1:5], signif(aggStats[6:18]/(aggStats$wins+aggStats$loss), digits = 4), 
-signif(aggStats[19]/(aggStats$wins+aggStats$loss), digits = 4))
+#perPosStats <- cbind(aggStats[,1:5], signif(aggStats[6:18]/(aggStats$wins+aggStats$loss), digits = 4), 
+#signif(aggStats[19] / (aggStats$wins + aggStats$loss), digits = 4))
+
+perPosStats <- cbind(aggStats[c("TeamID","TeamName","conf","wins","loss")],
+    aggStats[c("fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf")] / aggStats$postot,
+    scale(aggStats["postot"]))
 
 statcolnames <- c("TeamID","TeamName","conf","wins","loss","fga","fgm","fga3","fgm3","fta","ftm",
     "or","dr","ast","to","stl","blk","pf","postot")
 
-tournStat <- perPosStats[perPosStats$Team_Id == tournTeams$Team,]
+#tournStat <- perPosStats[perPosStats$Team_Id == tournTeams$Team,]
 smid <- mid[mid$season == year,]
 
 perPosTeamA <- perPosStats[0,c("TeamID", "conf", "fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf","postot")]
