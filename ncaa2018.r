@@ -45,12 +45,12 @@ Lstats$LTeamID <-factor(Lstats$LTeamID)
 
 Wstats <- cbind(Wstats[c("WTeamID", "WLoc", "conf")],
     Wstats[c("WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
-    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")],#/Wstats$pos, 
+    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")],#/Wstats$WPos, 
     Wstats["WPos"])
 
 Lstats <- cbind(Lstats[c("LTeamID", "WLoc", "conf")],
     Lstats[c("LFGM", "LFGA", "LFGM3", "LFGA3", "LFTM", "LFTA",
-    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")],#/Lstats$pos, 
+    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")],#/Lstats$LPos, 
     Lstats["LPos"])
 
 statcolnames <- c("teamID", "loc", "conf", "fgm","fga","fgm3","fga3","ftm","fta",
@@ -96,7 +96,7 @@ Clabel <- ifelse(as.numeric(teamA$teamID) == as.numeric(Wlabel), 1, 0)
 #    tlabel <- ifelse(as.numeric(teamA$teamID[i]) == as.numeric(Wlabel[i]),1,0)
 #}
 
-# one hot home and away
+# one hot loc
 locs <- sort(unique(factor(Wstats$loc)))
 Tloc <- Wstats$loc[0]
 #Tloc <- ifelse(teamA$loc == locs[1],1,0)
@@ -173,9 +173,9 @@ temp <- cbind("class" = Clabel,  teamA[c("TeamAfgm","TeamAfga","TeamAfgm3","Team
     teamB[c("TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor","TeamBdr","TeamBast", "TeamBto",
     "TeamBstl", "TeamBblk", "TeamBpf", "TeamBpos")], cnames, tnames, Tloc)
 #temp <- cbind("class" = Clabel, diffVector, cnames, tnames, Tloc)
-training <- createDataPartition(y = temp$class,p = 0.8,list = FALSE)
-train <- temp[training,]
-test <- temp[-training,]
+#training <- createDataPartition(y = temp$class,p = 0.8,list = FALSE)
+#train <- temp[training,]
+#test <- temp[-training,]
 
 # train[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
 #     "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApos",
@@ -197,8 +197,8 @@ test <- temp[-training,]
 #train <- cbind(tempA, tempB)
 #train <- cbind("class" = Clabel, train)
 
-write.csv(train, file = paste(trainpath, 'train', year, '.csv', sep = ''), row.names = FALSE)
-write.csv(test, file = paste(trainpath, 'test', year, '.csv', sep = ''), row.names = FALSE)
+write.csv(temp, file = paste(trainpath, 'train', year, '.csv', sep = ''), row.names = FALSE)
+#write.csv(test, file = paste(trainpath, 'test', year, '.csv', sep = ''), row.names = FALSE)
 
 
 

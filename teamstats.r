@@ -1,7 +1,7 @@
 datapath <- './data/'
 logpath <- './logs/'
 trainpath <- './modeldata/'
-year <- 2015
+year <- 2014
 
 teams <- read.csv(paste(datapath, 'Teams.csv', sep=''))
 seasons <- read.csv(paste(datapath, 'Seasons.csv', sep=''))
@@ -20,18 +20,18 @@ rscrSeason <- rscr[rscr$Season == year,]
 tid <- teams[(teams$FirstD1Season <= year & teams$LastD1Season >= year),]
 cid <- conferences[conferences$Season == year,]
 
-mid <- matrix(unlist(strsplit(as.character(submission$ID), '_')), ncol =3)
 subseason <- vector(length = 0)
 subA <- vector(length = 0)
 subB <- vector(length = 0)
 
 for (i in 1:nrow(submission)) {
-    temp <- unlist(strsplit(as.character(submission$ID), '_'))
+    temp <- unlist(strsplit(as.character(submission$ID[i]), '_'))
     subseason <- c(subseason, temp[1])
     subA <- c(subA, temp[2])
     subB <- c(subB, temp[3])
 }
 
+mid <- data.frame("season" = subseason, "TeamAID" = subA, "TeamBID" = subB)
 
 Wstats <- rsdrSeason[,c("WTeamID", "WLoc", "WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
     "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")]
@@ -83,4 +83,55 @@ aggStats$postot <- aggStats$fga + aggStats$to + (.475 * aggStats$fta) - aggStats
 perPosStats <- cbind(aggStats[,1:5], signif(aggStats[6:18]/(aggStats$wins+aggStats$loss), digits = 4), 
 signif(aggStats[19]/(aggStats$wins+aggStats$loss), digits = 4))
 
+statcolnames <- c("TeamID","TeamName","conf","wins","loss","fga","fgm","fga3","fgm3","fta","ftm",
+    "or","dr","ast","to","stl","blk","pf","postot")
+
 tournStat <- perPosStats[perPosStats$Team_Id == tournTeams$Team,]
+smid <- mid[mid$season == year,]
+
+perPosTeamA <- perPosStats[0,c("TeamID", "conf", "fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf","postot")]
+perPosTeamB <- perPosStats[0,c("TeamID", "conf", "fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf","postot")]
+for (i in 1:nrow(smid)) {
+    perPosTeamA <- rbind(perPosTeamA, perPosStats[perPosStats$TeamID == smid$TeamAID[i], c("TeamID", "conf","fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf","postot")])
+    perPosTeamB <- rbind(perPosTeamB, perPosStats[perPosStats$TeamID == smid$TeamBID[i], c("TeamID", "conf","fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf","postot")])
+}
+
+#one hot teams
+tnames <- perPosTeamA$TeamID[0]
+#TnameA <- ifelse(as.numeric(teamA$teamID) == as.numeric(tid[1]),1,0)
+#TnameB <- ifelse(as.numeric(teamB$teamID) == as.numeric(tid[1]),1,0)
+for (i in 1:length(tid$TeamID)) {    
+    temp <- ifelse((perPosTeamA$TeamID == tid$TeamID[i]) | (perPosTeamB$TeamID == tid$TeamID[i]) ,1,0)
+    #tempB <- ifelse(as.numeric(teamB$teamID) == as.numeric(tid[i]),1,0)
+    tnames <- cbind(tnames, temp)
+    #TnameB <- cbind(TnameB, tempB)
+}
+colnames(tnames) <- tid$TeamName 
+
+#one hot conferences
+cnames <- as.numeric(cid$ConfAbbrev[0])
+clist <- sort(unique(cid$ConfAbbrev))
+for (i in 1:length(clist)) {
+    temp <- ifelse((perPosTeamA$conf == clist[i]) | (perPosTeamB$conf == clist[i]), 1, 0)
+    #tempB <- ifelse(as.character(teamB$conf) == as.character(conf[i]), 1, 0)
+    cnames <- cbind(cnames, temp)
+    #cnamesB <- cbind(cnamesB, tempB)
+}
+colnames(cnames) <- clist
+
+#one hot loc
+locs <- data.frame("away" = 0, "home" = 0, "neutral" = 1)
+for (i in 1:nrow(perPosTeamA)-1) {
+    temp <- locs[i,]
+    locs <- rbind(locs, temp)
+}
+
+colnames(perPosTeamA) <- paste('TeamA', colnames(perPosTeamA), sep = '')
+colnames(perPosTeamB) <- paste('TeamB', colnames(perPosTeamB), sep = '')
+
+test <- cbind(perPosTeamA[c("TeamAfgm","TeamAfga","TeamAfgm3","TeamAfga3","TeamAftm","TeamAfta","TeamAor",
+    "TeamAdr","TeamAast", "TeamAto", "TeamAstl", "TeamAblk", "TeamApf", "TeamApostot")], 
+    perPosTeamB[c("TeamBfgm","TeamBfga","TeamBfgm3","TeamBfga3","TeamBftm","TeamBfta","TeamBor","TeamBdr","TeamBast", "TeamBto",
+    "TeamBstl", "TeamBblk", "TeamBpf", "TeamBpostot")], cnames, tnames, locs)
+
+write.csv(test, file = paste(trainpath, 'tourney', year, '.csv', sep = ''), row.names = FALSE)
