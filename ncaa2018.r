@@ -110,37 +110,27 @@ for (i in 1:nlevels(Wstats$loc)) {
 colnames(Tloc) <- c("away", "home", "neutral")
 #colnames(TlocB) <- c("away", "home", "neutral")
 
-#one hot teams
-#tnames <- teams$TeamName[teams$TeamID == tid[1]]
-#for (i in 2:length(tid)) {
-#    tnames[i] <- teams$TeamName[teams$Team_Id == tid[i]]
-#}
-tnames <- teamA$teamID[0]
-#TnameA <- ifelse(as.numeric(teamA$teamID) == as.numeric(tid[1]),1,0)
-#TnameB <- ifelse(as.numeric(teamB$teamID) == as.numeric(tid[1]),1,0)
-for (i in 1:length(tid$TeamID)) {
-    temp <- ifelse((teamA$teamID == tid$TeamID[i]) | (teamB$teamID == tid$TeamID[i]) ,1,0)
-    #tempB <- ifelse(as.numeric(teamB$teamID) == as.numeric(tid[i]),1,0)
-    tnames <- cbind(tnames, temp)
-    #TnameB <- cbind(TnameB, tempB)
+one.hot.teams <- function(a, b, idlist, nlist) {
+    tnames <- a$teamID[0]
+    for (i in 1:length(idlist)) {
+        temp <- ifelse((a$teamID == idlist[i]) | (b$teamID == idlist[i]) ,1,0)
+        tnames <- cbind(tnames, temp)    
+    }
+    colnames(tnames) <- nlist #tnames    
+    tnames
 }
-colnames(tnames) <- tid$TeamName #tnames
-#colnames(TnameB) <- tid$TeamName #tnames
-
-#one hot conferences
-#conf <- sort(unique(factor(teams$Conference)))
-#cnames <- ifelse(as.character(teamA$conf) == as.character(conf[1]), 1, 0)
-#cnamesB <- ifelse(as.character(teamB$conf) == as.character(conf[1]), 1, 0)
-cnames <- as.numeric(teamA$conf[0])
-clist <- sort(unique(cid$ConfAbbrev))
-for (i in 1:length(clist)) {
-    temp <- ifelse((teamA$conf == clist[i]) | (teamB$conf == clist[i]), 1, 0)
-    #tempB <- ifelse(as.character(teamB$conf) == as.character(conf[i]), 1, 0)
-    cnames <- cbind(cnames, temp)
-    #cnamesB <- cbind(cnamesB, tempB)
+one.hot.conf <- function(a, b, clist) {
+    cnames <- as.numeric(a$conf[0])
+    clist <- sort(unique(clist))
+    for (i in 1:length(clist)) {
+        temp <- ifelse((a$conf == clist[i]) | (b$conf == clist[i]), 1, 0)
+        cnames <- cbind(cnames, temp)    
+    }
+    colnames(cnames) <- clist
+    cnames
 }
-colnames(cnames) <- clist
-#colnames(cnamesB) <- clist
+testhot <- one.hot.teams(teamA, teamB, tid$TeamID, tid$TeamName)
+testconf <- one.hot.conf(teamA, teamB, cid$ConfAbbrev)
 
 colnames(teamA) <- paste('TeamA', statcolnames, sep = '')
 colnames(teamB) <- paste('TeamB', statcolnames, sep = '')
