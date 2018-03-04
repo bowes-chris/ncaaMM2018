@@ -1,4 +1,5 @@
 library(caret)
+source('ncaaFunctions.r')
 
 datapath <- './data/'
 logpath <- './logs/'
@@ -31,8 +32,8 @@ cid <- conferences[conferences$Season == year,]
 Lstats$WLoc[Wstats$WLoc == 'H'] <- 'A'
 Lstats$WLoc[Wstats$WLoc == 'A'] <- 'H'
 
-Wstats$WPos <- Wstats$WFGA + Wstats$WTO + (.475 * Wstats$WFTA) - Wstats$WOR
-Lstats$LPos <- Lstats$LFGA + Lstats$LTO + (.475 * Lstats$LFTA) - Lstats$LOR
+#Wstats$WPos <- Wstats$WFGA + Wstats$WTO + (.475 * Wstats$WFTA) - Wstats$WOR
+#Lstats$LPos <- Lstats$LFGA + Lstats$LTO + (.475 * Lstats$LFTA) - Lstats$LOR
 
 #add conference
 for (i in 1:length(tid$TeamID)) {
@@ -45,16 +46,16 @@ Lstats$LTeamID <-factor(Lstats$LTeamID)
 
 Wstats <- cbind(Wstats[c("WTeamID", "WLoc", "conf")],
     Wstats[c("WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
-    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")]/Wstats$WPos, 
-    Wstats["WPos"])
+    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")])#/Wstats$WPos, 
+    #Wstats["WPos"])
 
 Lstats <- cbind(Lstats[c("LTeamID", "WLoc", "conf")],
     Lstats[c("LFGM", "LFGA", "LFGM3", "LFGA3", "LFTM", "LFTA",
-    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")]/Lstats$LPos, 
-    Lstats["LPos"])
+    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")])#/Lstats$LPos, 
+    #Lstats["LPos"])
 
 statcolnames <- c("teamID", "loc", "conf", "fgm","fga","fgm3","fga3","ftm","fta",
-    "or","dr","ast", "to", "stl", "blk", "pf", "pos")
+    "or","dr","ast", "to", "stl", "blk", "pf")#, "pos")
 
 colnames(Wstats) <- statcolnames
 
@@ -62,6 +63,23 @@ colnames(Lstats) <- statcolnames
 
 teamA <- Wstats[0,]
 teamB <- Lstats[0,]
+
+WadvStats <- Wstats[c(1, 2, 3)]
+
+WadvStats$pos <- teamPos(Wstats)
+WadvStats$oef <- teamOeff(Wstats)
+WadvStats$def <- teamDeff(Wstats)
+WadvStats$pace <- teamPace(Wstats)
+WadvStats$tsper <- trueSPer(Wstats)
+WadvStats$threepar <- threePAr(Wstats)
+WadvStats$ftrate <- ftRate(Wstats)
+WadvStats$drper <- teamDRPer(Wstats)
+WadvStats$orper <- teamORPer(Wstats)
+WadvStats$astper <- teamAstPer(Wstats)
+WadvStats$torate <- teamTORat(Wstats)
+WadvStats$trebper <- tRePer(Wstats)
+WadvStats$efg <- effFG(Wstats)
+WadvStats$oppos <- teamOpPos(Wstats)
 
 
 #Wnames <- lapply(Wlabel, function (x) { ifelse(teams$Team_Name[as.numeric(teams$Team_Id) == as.numeric(x)],1,0) })

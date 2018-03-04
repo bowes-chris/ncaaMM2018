@@ -15,7 +15,7 @@ tcr <- read.csv(paste(datapath, 'NCAATourneyCompactResults.csv', sep=''))
 Tseeds <- read.csv(paste(datapath, 'NCAATourneySeeds.csv', sep=''))
 Tslots <- read.csv(paste(datapath, 'NCAATourneySlots.csv', sep=''))
 submission <- read.csv(paste(datapath, 'SampleSubmissionStage1.csv', sep = ''))
-events <- read.csv(paste(datapath, 'Events_2017.csv', sep = ''))
+#events <- read.csv(paste(datapath, 'Events_2017.csv', sep = ''))
 players <- read.csv(paste(datapath, 'Players_2017.csv', sep = ''))
 
 rsdrSeason <- rsdr[rsdr$Season == year,]
@@ -37,19 +37,19 @@ for (i in 1:nrow(submission)) {
 
 mid <- data.frame("season" = subseason, "TeamAID" = subA, "TeamBID" = subB)
 
-Wstats <- rsdrSeason[,c("WTeamID", "WLoc", "WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
-    "WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")]
+#Wstats <- rsdrSeason[,c("WTeamID", "WLoc", "WFGM", "WFGA", "WFGM3", "WFGA3", "WFTM", "WFTA",
+    #"WOR", "WDR", "WAst", "WTO", "WStl", "WBlk", "WPF")]
 
-Lstats <- rsdrSeason[,c("LTeamID", "WLoc", "LFGM", "LFGA", "LFGM3", "LFGA3", "LFTM", "LFTA",
-    "LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")]
+#Lstats <- rsdrSeason[,c("LTeamID", "WLoc", "LFGM", "LFGA", "LFGM3", "LFGA3", "LFTM", "LFTA",
+    #"LOR", "LDR", "LAst", "LTO", "LStl", "LBlk", "LPF")]
 
 for (i in 1:length(tid$TeamID)) {
-    Wstats$conf[Wstats$WTeamID == tid$TeamID[i]] <- as.character(cid$ConfAbbrev[cid$TeamID == tid$TeamID[i]])
-    Lstats$conf[Lstats$LTeamID == tid$TeamID[i]] <- as.character(cid$ConfAbbrev[cid$TeamID == tid$TeamID[i]])
+#    Wstats$conf[Wstats$WTeamID == tid$TeamID[i]] <- as.character(cid$ConfAbbrev[cid$TeamID == tid$TeamID[i]])
+#    Lstats$conf[Lstats$LTeamID == tid$TeamID[i]] <- as.character(cid$ConfAbbrev[cid$TeamID == tid$TeamID[i]])
     tid$conf[i] <- as.character(cid$ConfAbbrev[cid$TeamID == tid$TeamID[i]])
 }
 
-aggStats <- tid[c(1,2,5)]
+aggStats <- tid[c(1, 2, 5)]
 for (i in 1:nrow(tid)) {
     #tid <- aggStats$Team_Id[i]  
     n <- sum(c(rsdrSeason$WTeamID == tid$TeamID[i], rsdrSeason$LTeamID ==  tid$TeamID[i]))  
@@ -150,13 +150,12 @@ statcolnames <- c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRa
 #tournStat <- perPosStats[perPosStats$Team_Id == tournTeams$Team,]
 smid <- mid[mid$season == year,]
 
-tStatA <- tStats[0, c("TeamID", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff", "deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")]
-tStatB <- tStats[0, c("TeamID", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff", "deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")]
-for (i in 1:nrow(smid)) {
-    tmpa <- tStats[tStats$TeamID == smid$TeamAID[i], c("TeamID", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff", "deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")])
-    rownames(tStatB) <- NULL
-    tStatA <- rbind(tStatA, tStats[tStats$TeamID == smid$TeamAID[i], c("TeamID", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff", "deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")])
-    tStatB <- rbind(tStatB, tStats[tStats$TeamID == smid$TeamBID[i], c("TeamID", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff", "deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")])
+tStatA <- smid[0]
+tStatB <- smid[0]
+for (i in 1:length(tStats)) {        
+    tStatA <- rbind(tStatA, tStats[tStats$TeamID == smid$TeamAID[i], c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff"
+    ,"deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")])
+    #tStatB <- rbind(tStatB, tStats[tStats$TeamID == smid$TeamBID[i],])
 }
 
 #one hot teams

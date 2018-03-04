@@ -34,7 +34,7 @@ one.hot.loc <- function(a, w) {
 
 teamPos <- function(a) {
     #Basic Possession Formula=0.96*[(Field Goal Attempts)+(Turnovers)+0.44*(Free Throw Attempts)-(Offensive Rebounds)]
-    0.96 * (a['fga'] + a['to'] + (0.44 * a['fta']) - a['or']) 
+    (a['fga'] + a['to'] + (0.44 * a['fta']) - a['or']) # * .96
 }
 teamOpPos <- function(a) {
     #Basic Possession Formula=0.96*[(Field Goal Attempts)+(Turnovers)+0.44*(Free Throw Attempts)-(Offensive Rebounds)]
