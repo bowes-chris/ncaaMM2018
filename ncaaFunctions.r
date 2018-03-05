@@ -31,8 +31,75 @@ one.hot.loc <- function(a, w) {
     colnames(lnames) <- c("away", "home", "neutral")
     lnames
 }
-
-teamPos <- function(a) {
+gamePos <- function(a, team) {
+    cnames <- unlist(paste(team, c('fga','to', 'fta', 'or'), sep=''))
+    (a[cnames[1]] + a[cnames[2]] + (0.44 * a[cnames[3]]) - a[cnames[4]]) * .96
+}
+gameOeff <- function(a, team) {
+    #Offensive Efficiency Formula=100*(Points Scored)/(Possessions)
+    cnames <- unlist(paste(team, c('pts'), sep=''))
+    (a[cnames[1]]) / gamePos(a, team) #* 100    
+}
+gameDeff <- function(a, team) {
+    opteam <- ifelse(team == 'A', 'B', 'A')
+    cnames <- unlist(paste(opteam, c('pts'), sep=''))
+    (a[cnames[1]]) / gamePos(a, opteam) #* 100
+}
+gamePace <- function(a,team) {
+    #Pace Factor (Pace) is calculated as:
+    #\text{Pace Factor} = \text{Minutes per Game} \times \frac{\text{Team Possessions} + \text{Opponent Possessions}}{2 \times \frac{\text{Team Minutes Played}}{5}}
+    cnames <- 'NumOT'
+    opteam <- ifelse(team == 'A', 'B', 'A')
+    (40 * ((gamePos(a, team) + gamePos(a, opteam)) / (2 * ((200 + (a[cnames[1]] * 5)) / 5) )))
+}
+gametrueSA <- function(a, team) {
+    cnames <- unlist(paste(team, c('fga', 'fta'), sep=''))
+    a[cnames[1]] + (0.44 * a[cnames[2]])
+}
+gametsper <- function(a, team) {
+    cnames <- unlist(paste(team, c('pts'), sep=''))
+    a[cnames[1]] / (2 * gametrueSA(a, team))
+}
+gamethreePAr <- function(a, team) {
+    cnames <- unlist(paste(team, c('fga3','fga'), sep=''))
+    a[cnames[1]] / a[cnames[2]]
+}
+gameftRate <- function(a, team) {
+    cnames <- unlist(paste(team, c('fta','fga'), sep=''))
+    a[cnames[1]] / a[cnames[2]]
+}
+gameAstPer <- function(a, team) {
+    # Assist Ratio Formula=(Assists)*100)/ [(Field Goal Attempts)+(Free Throw Attempts*0.44)+(Assists)+(Turnovers)]
+    cnames <- unlist(paste(team, c('ast','fga','fta','ast','to'), sep=''))
+    (a[cnames[1]]) / (a[cnames[2]] + (0.44 * a[cnames[3]]) + a[cnames[4]] + a[cnames[5]]) #* 100
+    #100 * AST / (((MP / (Tm MP / 5)) * Tm FG) - FG)
+    #100 * (a['ast'])  / (((minutesPlayed(a) / (minutesPlayed(a) /5)) * a['fgm']) - a['fgm'])
+}
+gameDRPer <- function(a, team) {
+    # Defensive Rebounding Percentage Formula=(Team Defensive Rebounds)/[(Team Defensive Rebounds)+Opponent's Offensive Rebounds)]
+    cnames <- unlist(paste(team, c('dr'), sep=''))
+    opteam <- ifelse(team == 'A', 'B', 'A')
+    opname <- unlist(paste(opteam, c('or'), sep=''))
+    a[cnames[1]] / (a[cnames[1]]+a[opname[1]])
+}
+gameORPer <- function(a, team) {
+    # Offensive Rebounding Percentage Formula = (Offensive Rebounds) / [(Offensive Rebounds) + (Opponent ï¿½s Defensive Rebounds)]
+    cnames <- unlist(paste(team, c('or'), sep=''))
+    opteam <- ifelse(team == 'A', 'B', 'A')
+    opname <- unlist(paste(opteam, c('dr'), sep=''))
+    a[cnames[1]] / (a[cnames[1]]+a[opname[1]])    
+}
+gameTORat <- function(a, team) {
+    # Turnover Ratio Formula=(Turnovers)*100)/ [(Field Goal Attempts)+(Free Throw Attempts*0.44)+(Assists)+(Turnovers)]
+    cnames <- unlist(paste(team, c('to', 'fga', 'fta', 'ast'), sep=''))
+    (a[cnames[1]] / (a[cnames[2]] + (0.44 * a[cnames[3]]) + a[cnames[4]] + a[cnames[1]])) # * 100
+}
+gameeffFG <- function(a, team) {
+    #Effective Field Goal Percentage; the formula is(FG + 0.5 * 3 P) / FGA.
+    cnames <- unlist(paste(team, c('fgm', 'fgm3', 'fga'), sep=''))
+    (a[cnames[1]] + (0.5 * a[cnames[2]])) / a[cnames[3]]
+}
+teamPos <- function(a, team) {
     #Basic Possession Formula=0.96*[(Field Goal Attempts)+(Turnovers)+0.44*(Free Throw Attempts)-(Offensive Rebounds)]
     (a['fga'] + a['to'] + (0.44 * a['fta']) - a['or']) # * .96
 }
@@ -74,7 +141,7 @@ teamDRPer <- function(a) {
     a['dr'] / (a['dr']+a['opor'])
 }
 teamORPer <- function(a) {
-    # Offensive Rebounding Percentage Formula = (Offensive Rebounds) / [(Offensive Rebounds) + (Opponent ’s Defensive Rebounds)]
+    # Offensive Rebounding Percentage Formula = (Offensive Rebounds) / [(Offensive Rebounds) + (Opponent ï¿½s Defensive Rebounds)]
     a['or'] / (a['or'] + a['opdr'])
 }
 teamAstPer <- function(a) {
@@ -111,9 +178,9 @@ getOppWinP <- function(opl) {
 
 }
 rpi <- function(ts, rs) {
-    #Rating Percentage Index(RPI) Formula = .25 * (Team ’s Winning Percentage) 
-    #+ .50 * (Opponents ’ Average Winning Percentage) 
-    #+ 0.25 * (Opponents ’ Opponents ’ Average Winning Percentage)
+    #Rating Percentage Index(RPI) Formula = .25 * (Team ï¿½s Winning Percentage) 
+    #+ .50 * (Opponents ï¿½ Average Winning Percentage) 
+    #+ 0.25 * (Opponents ï¿½ Opponents ï¿½ Average Winning Percentage)
     trpi <- ts$winp[0]
     for (i in 1:nrow(ts)) {
         print(paste('Calculating RPI for ', ts$TeamName[i], sep = ''))

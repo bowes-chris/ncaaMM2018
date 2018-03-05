@@ -15,5 +15,6 @@ subpred <- rbind(pred2014, pred2015)
 subpred <- rbind(subpred, pred2016)
 subpred <- rbind(subpred, pred2017)
 
-submission$Pred[1:nrow(preds)] <- pred2014$V1
-submission$Pred[1:nrow(preds)] <- pred2014$V1
+submission$Pred <- subpred$V1
+
+write.csv(submission, file = paste(outpath, 'stage1submission.csv', sep = ''), row.names = FALSE)

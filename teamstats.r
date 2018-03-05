@@ -110,51 +110,62 @@ for (i in 1:nrow(tid)) {
 
 tStats <- tid[c(1, 2, 5)]
 #team pace
-tStats$pace <- teamPace(aggStats) / teamGames(aggStats)
+tStats$pace <- unlist(teamPace(aggStats) / teamGames(aggStats))
 # team True Shooting Percentage
-tStats$tsper <- trueSPer(aggStats)
+tStats$tsper <- unlist(trueSPer(aggStats))
 # team fga3 per fga
-tStats$thrPar <- threePAr(aggStats)
+tStats$thrPar <- unlist(threePAr(aggStats))
 # team fta per fga
-tStats$ftRate <- ftRate(aggStats)
+tStats$ftRate <- unlist(ftRate(aggStats))
 #tStats$trbPer <- tRePer(aggStats)
-tStats$astPer <- teamAstPer(aggStats)
+tStats$astPer <- unlist(teamAstPer(aggStats))
 # total possessions / game
-tStats$postot <- teamPos(aggStats) / teamGames(aggStats)
-tStats$oppos <- teamOpPos(aggStats) / teamGames(aggStats)
+tStats$postot <- unlist(teamPos(aggStats) / teamGames(aggStats))
+tStats$oppos <- unlist(teamOpPos(aggStats) / teamGames(aggStats))
 # win percentage 
-tStats$winp <- aggStats$wins/ (aggStats$wins + aggStats$loss)
+tStats$winp <- unlist(aggStats$wins/ (aggStats$wins + aggStats$loss))
 # Offensive Efficiency, Deffinsive Efficiency
-tStats$oeff <- teamOeff(aggStats)
-tStats$deff <- teamDeff(aggStats)
-# calculate RPI ranking
-tStats$rpi <- rpi(tStats, rsdrSeason)
+tStats$oeff <- unlist(teamOeff(aggStats))
+tStats$deff <- unlist(teamDeff(aggStats))
 # point diff, eff diff
-tStats$ptdiff <- (aggStats$pts - aggStats$ptsa) / teamGames(aggStats)
-tStats$effdiff <- (teamOeff(aggStats) - teamDeff(aggStats))# / teamGames(aggStats)
+#tStats$ptdiff <- unlist((aggStats$pts - aggStats$ptsa) / teamGames(aggStats))
+#tStats$effdiff <- unlist((teamOeff(aggStats) - teamDeff(aggStats)))# / teamGames(aggStats)
 # team DR/OR per
-tStats$drPer <- teamDRPer(aggStats)
-tStats$orPer <- teamORPer(aggStats)
+tStats$drPer <- unlist(teamDRPer(aggStats))
+tStats$orPer <- unlist(teamORPer(aggStats))
 # team TO ratio
-tStats$toRat <- teamTORat(aggStats)
-tStats$eFG <- effFG(aggStats)
+tStats$toRat <- unlist(teamTORat(aggStats))
+# team effective FG
+tStats$eFG <- unlist(effFG(aggStats))
+# calculate RPI ranking
+#tStats$rpi <- rpi(tStats, rsdrSeason)
+
+
 
 rownames(tStats) <- NULL
-#perPosStats <- cbind(aggStats[c("TeamID","TeamName","conf","wins","loss")],
-#   aggStats[c("fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf")] / aggStats$postot,
+perPosStats <- cbind(aggStats[c("TeamID","TeamName","conf","wins","loss")],
+   aggStats[c("fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf",
+               "ot", "opfga", "opfgm", "opfga3", "opfgm3", "opfta", "opftm", "opor", "opdr", "opast",
+               "opto", "opstl", "opblk", "oppf")]) # / aggStats$postot,
 #   scale(aggStats["postot"]))
-
 statcolnames <- c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff"
-    ,"deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")
+    ,"deff", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")#,"rpi"
 
 #tournStat <- perPosStats[perPosStats$Team_Id == tournTeams$Team,]
 smid <- mid[mid$season == year,]
 
-tStatA <- smid[0]
-tStatB <- smid[0]
-for (i in 1:length(tStats)) {        
-    tStatA <- rbind(tStatA, tStats[tStats$TeamID == smid$TeamAID[i], c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff"
-    ,"deff", "rpi", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")])
+tStatA <- tStats[0,c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff"
+    ,"deff", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")]
+tStatB <- teamStats[0,c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff"
+    ,"deff", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")]
+
+perPosTeamA <- perPosStats[0,c("TeamID", "conf", "fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf",
+                                "ot", "opfga", "opfgm", "opfga3", "opfgm3", "opfta", "opftm", "opor", "opdr", "opast", "opto", "opstl", "opblk", "oppf")]
+perPosTeamB <- perPosStats[0,c("TeamID", "conf", "fgm", "fga", "fgm3", "fga3", "ftm", "fta", "or", "dr", "ast", "to", "stl", "blk","pf",
+                                "ot", "opfga", "opfgm", "opfga3", "opfgm3", "opfta", "opftm", "opor", "opdr", "opast", "opto", "opstl", "opblk", "oppf")]    
+for (i in 1:nrow(smid)) {        
+    tStatA <- rbind(tStatA, tStats[teamStats$TeamID == smid$TeamAID[i], c("TeamID", "TeamName", "conf", "pace", "tsper", "thrPar", "ftRate", "astPer", "postot", "oppos", "winp", "oeff",
+     "deff", "ptdiff", "effdiff", "drPer", "orPer", "toRat", "eFG")])
     #tStatB <- rbind(tStatB, tStats[tStats$TeamID == smid$TeamBID[i],])
 }
 
